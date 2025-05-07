@@ -55,30 +55,7 @@ python main.py --visualize --exhaustive --seed 75
 
 ## Data
 
-The items are loaded from `objects.csv` (first row is a header):
-
-| value | weight |
-|-------|--------|
-| 10    | 2      |
-| 5     | 3      |
-| 15    | 5      |
-| 7     | 7      |
-| 6     | 1      |
-| 18    | 4      |
-| 3     | 1      |
-| 12    | 6      |
-| 8     | 3      |
-| 9     | 2      |
-| 14    | 4      |
-| 11    | 2      |
-| 20    | 8      |
-| 4     | 1      |
-| 13    | 5      |
-| 16    | 7      |
-| 2     | 1      |
-| 17    | 6      |
-| 19    | 3      |
-| 21    | 9      |
+The items are loaded from [`objects.csv`](objects.csv) (first row is a header):
 
 ## Example Result
 
