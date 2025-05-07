@@ -3,19 +3,33 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import argparse
 
-## Running parameters
-random.seed(75) # Set random seed for reproducibility
-csv_file = 'objects.csv' # Path to the CSV file containing items
+# Argument parsing
+parser = argparse.ArgumentParser(description="Genetic Algorithm for the Knapsack Problem")
+parser.add_argument('--population_size', type=int, default=20, help='Size of the population (default: 20)')
+parser.add_argument('--num_generations', type=int, default=30, help='Number of generations (default: 30)')
+parser.add_argument('--mutation_rate', type=float, default=0.01, help='Mutation rate (default: 0.01)')
+parser.add_argument('--tournament_size', type=int, default=3, help='Tournament size for selection (default: 3)')
+parser.add_argument('--max_weight', type=int, default=15, help='Maximum weight of the knapsack (default: 15)')
+parser.add_argument('--visualize', action='store_true', help='Visualize the population fitness evolution')
+parser.add_argument('--exhaustive', action='store_true', help='Perform exhaustive search for the optimal solution')
+parser.add_argument('--seed', type=int, default=None, help='Random seed for reproducibility')
+parser.add_argument('--csv_file', type=str, default='objects.csv', help='Path to the CSV file containing items')
+args = parser.parse_args()
+
+# Running parameters
+if args.seed is not None:
+    random.seed(args.seed)
+csv_file = args.csv_file
 if not os.path.exists(csv_file):
     raise FileNotFoundError(f"CSV file '{csv_file}' not found. Please provide a valid path.")
-find_optimal = False # Set to True to find the optimal solution using exhaustive search
-visualize = True # Set to True to visualize the evolution of population fitness
+find_optimal = args.exhaustive
+visualize = args.visualize
 
-## Problem data
-# Load items from objects.csv (CSV format: weight,value per line, no header)
+# Problem data
 items = []
-with open('objects.csv', newline='') as csvfile:
+with open(csv_file, newline='') as csvfile:
     reader = csv.reader(csvfile)
     # Skip header
     next(reader, None)
@@ -23,14 +37,14 @@ with open('objects.csv', newline='') as csvfile:
         value, weight = map(int, row)
         items.append((value, weight))
 
-max_weight = 15
+max_weight = args.max_weight
 n_items = len(items)
 
-## Genetic Algorithm parameters
-population_size = 20
-n_generations = 30
-mutation_rate = 0.01
-tournament_size = 3
+# Genetic Algorithm parameters
+population_size = args.population_size
+n_generations = args.num_generations
+mutation_rate = args.mutation_rate
+tournament_size = args.tournament_size
 
 ## Genetic Algorithm functions
 
@@ -130,9 +144,9 @@ for generation in range(n_generations):
 
 # Final result
 print("\nBest solution found:")
-print("Chromosome:", best)
-print("Value:", evaluate(best))
-print("Weight:", sum(best[i] * items[i][1] for i in range(n_items)))
+print("\tChromosome:", best)
+print("\tValue:", evaluate(best))
+print("\tWeight:", sum(best[i] * items[i][1] for i in range(n_items)))
 
 
 ## Exhaustive search to find the optimal solution
@@ -156,18 +170,16 @@ if find_optimal:
             optimal_weight = weight
             optimal_combination = combination
 
-    print("\nOptimal solution found:")
-    print("Chromosome:", optimal_combination)
-    print("Value:", optimal_value)
-    print("Weight:", optimal_weight)
-    print(f"Items included: {[i for i in range(n_items) if optimal_combination[i] == 1]}")
+    print("\nOptimal solution found (exhaustive search):")
+    print("\tChromosome:", optimal_combination)
+    print("\tValue:", optimal_value)
+    print("\tWeight:", optimal_weight)
 
 ## Visualization of population fitness evolution
 if visualize:
     print("\nVisualizing population fitness evolution...")
-
     plt.figure(figsize=(10, 6))
-    plt.imshow(fitness_history, aspect='auto', cmap='viridis', vmin=0, vmax=77) # 77 is the max value for the example
+    plt.imshow(fitness_history, aspect='auto', cmap='viridis', vmin=0, vmax=77)
     plt.colorbar(label='Fitness (Value)')
     plt.xlabel('Generation')
     plt.ylabel('Individual')
